@@ -12,9 +12,7 @@ def _main(argv):
     conf_dir, conf_file = os.path.split(conf_file)
     if conf_dir:
         sys.path.insert(0, conf_dir)
-    print(conf_file, conf_dir)
     importlib.import_module(os.path.splitext(conf_file)[0])
-    print(Config._registry)
     Config.create(argv)
 
 

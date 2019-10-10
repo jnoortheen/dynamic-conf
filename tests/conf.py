@@ -23,12 +23,6 @@ def create_config():
 
 
 def get_config():
-    class CONFIG(Config):
-        NUM = 1
-        NONE_VAL = None
-        OVERLOADED = "load"
-        VAR = None
-        FROM_FILE = REQUIRED
-        MISSING = REQUIRED
+    from .hav_conf import CONFIG
 
     return CONFIG

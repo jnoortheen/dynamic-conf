@@ -24,9 +24,11 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "~2.7 || ^3.6"
+six = "^1.12"
 
 [tool.poetry.dev-dependencies]
 pytest = "^4"
+pytest-cov = "^2.8"
 
 [tool.poetry.scripts]
 dynamic-conf = 'dynamic_conf:main'

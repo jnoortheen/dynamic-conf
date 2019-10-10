@@ -1,0 +1,36 @@
+[tool.poetry]
+name = "dynamic-conf"
+version = "0.1.0"
+description = "Easy way to manage Configuration variables separate from App code. Usefull while developing and deploying django-web-apps through CI/CD"
+authors = ["Noortheen Raja <jnoortheen@gmail.com>"]
+license = "MIT"
+
+readme = 'README.md'
+repository = "https://github.com/jnoortheen/dynamic-conf"
+homepage = "https://github.com/jnoortheen/dynamic-conf"
+
+keywords = ['django', 'configuration', '12 factor settings']
+classifiers = [
+    "Framework :: Django",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Topic :: Utilities",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[tool.poetry.dependencies]
+python = "~2.7 || ^3.6"
+
+[tool.poetry.dev-dependencies]
+pytest = "^4"
+
+[tool.poetry.scripts]
+dynamic-conf = 'dynamic_conf:main'
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
+

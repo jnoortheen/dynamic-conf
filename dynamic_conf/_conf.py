@@ -95,6 +95,10 @@ class Config(with_metaclass(ConfigMeta)):
 
     @classmethod
     def create(cls, argv):
+        if len(cls._registry) < 2:
+            raise NotImplementedError(
+                "Config object is not inherited or the config file is not loaded."
+            )
         CONF_FILE = cls.get_env_file_path()
         if os.path.exists(CONF_FILE):
             print("Found", CONF_FILE, "existing already")

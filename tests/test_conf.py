@@ -28,7 +28,7 @@ def test_config_loading(clean_config):
 
 
 def test_cofig_writing(tmp_path, clean_config):
-    conf_file = os.path.join(tmp_path, "conf.py")
+    conf_file = os.path.join(tmp_path, "_conf.py")
     with open(conf_file, "w") as f:
         f.write(
             """\
@@ -41,11 +41,9 @@ class CONFIG(Config):
 """
         )
 
-    from dynamic_conf import main
-    import sys
+    from dynamic_conf import _main
 
-    sys.path.append(str(tmp_path))
-    main(["conf", "ARG1=VAL1", "ARG2=VAL2"])
+    _main([conf_file, "ARG1=VAL1", "ARG2=VAL2"])
 
     env_file = os.path.join(tmp_path, "env.py")
     assert os.path.exists(env_file)

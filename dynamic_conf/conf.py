@@ -2,7 +2,6 @@ from __future__ import print_function
 
 import importlib
 import os
-import sys
 
 from six import with_metaclass
 
@@ -22,7 +21,6 @@ class Var:
         self.name = name
         self.module = module
         self.default = default
-        print(self.default, name)
 
     def __get__(self, instance, owner):
         if self.name in os.environ:
@@ -96,7 +94,7 @@ class Config(with_metaclass(ConfigMeta)):
         )
 
     @classmethod
-    def create(cls):
+    def create(cls, argv):
         CONF_FILE = cls.get_env_file_path()
         if os.path.exists(CONF_FILE):
             print("Found", CONF_FILE, "existing already")
@@ -111,7 +109,7 @@ class Config(with_metaclass(ConfigMeta)):
             if k in os.environ:
                 vals[k] = os.environ[k]
 
-        for arg in sys.argv:
+        for arg in argv:
             if "=" in arg:
                 k, val = arg.split("=")
                 vals[k] = val

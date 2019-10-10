@@ -29,6 +29,7 @@ six = "^1.12"
 [tool.poetry.dev-dependencies]
 pytest = "^4"
 pytest-cov = "^2.8"
+tox = "^3.14"
 
 [tool.poetry.scripts]
 dynamic-conf = 'dynamic_conf:main'

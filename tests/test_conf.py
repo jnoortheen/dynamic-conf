@@ -1,5 +1,8 @@
-from dynamic_conf import Config, REQUIRED
 import os
+
+import pytest
+
+from dynamic_conf import Config, REQUIRED
 
 os.environ["VAR"] = "variable"
 
@@ -11,6 +14,8 @@ class CONFIG(Config):
     VAR = None
 
     FROM_FILE = REQUIRED
+    MISSING = REQUIRED
+    # Req: str
 
 
 def test_config_loading():
@@ -19,3 +24,7 @@ def test_config_loading():
     assert CONFIG.OVERLOADED == "over-loaded"
     assert CONFIG.VAR == "variable"
     assert CONFIG.FROM_FILE == "file"
+    with pytest.raises(LookupError):
+        print(CONFIG.MISSING)
+    # with pytest.raises(LookupError):
+    #     print(CONFIG.Req)

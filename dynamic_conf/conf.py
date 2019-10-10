@@ -10,25 +10,33 @@ _UNDEFINED = object()
 REQUIRED = object()  # only for Python2 support
 
 
-def get_conf_var(module, name, default=_UNDEFINED):
-    """
-        if not given a default explicitly then this will raise an error.
-        Get the given environment variable in followind order
-            1. os.environment
-            2. env.py
-            3. default value
-    """
+class Var:
+    def __init__(self, module, name, default=_UNDEFINED):
+        """
+            if not given a default explicitly then this will raise an error.
+            Get the given environment variable in followind order
+                1. os.environment
+                2. env.py
+                3. default value
+        """
+        self.name = name
+        self.module = module
+        self.default = default
+        print(self.default, name)
 
-    if name in os.environ:
-        return os.environ[name]
-    if module and hasattr(module, name):
-        return getattr(module, name)
-    if default != _UNDEFINED:
-        return default
+    def __get__(self, instance, owner):
+        if self.name in os.environ:
+            return os.environ[self.name]
+        if self.module and hasattr(self.module, self.name):
+            return getattr(self.module, self.name)
+        if self.default not in {_UNDEFINED, REQUIRED}:
+            return self.default
 
-    raise Exception(
-        "Failed to get {} variable from os.environ or {}".format(name, module)
-    )
+        raise LookupError(
+            "Failed to get {} variable from os.environ or {}".format(
+                self.name, self.module
+            )
+        )
 
 
 def import_env_module(cls):
@@ -65,11 +73,10 @@ class ConfigMeta(type):
             env_module = import_env_module(cls)
             for attrname, attrvalue in attrs.items():
                 if not attrname.startswith("_"):
-                    setattr(
-                        cls,
-                        attrname,
-                        get_conf_var(env_module, attrname, default=attrvalue),
-                    )
+                    setattr(cls, attrname, Var(env_module, attrname, default=attrvalue))
+                elif attrname == "__annotations__":
+                    for annot in attrvalue:
+                        setattr(cls, annot, Var(env_module, annot, default=REQUIRED))
         return cls
 
 

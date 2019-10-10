@@ -39,6 +39,9 @@ env DB_PASS='123' dynamic-conf
 
 # or you could pass as list of key-value pair
 dynamic-conf DB_USER='user-1' DB_PASS='123'
+
+# to filter environment variables with a prefix
+env VARS_PREFIX="PROD_" dynamic-conf PROD_DB_USER="user-2"
 ```
 
 - To use the config simply import and use particular attribute

@@ -1,5 +1,10 @@
 from __future__ import print_function
 
+try:
+    reload
+except Exception:
+    from importlib import reload
+
 import importlib
 import os
 
@@ -9,7 +14,7 @@ _UNDEFINED = object()
 REQUIRED = object()  # only for Python2 support
 
 
-class Var:
+class Var(object):
     def __init__(self, module, name, default=_UNDEFINED):
         """
             if not given a default explicitly then this will raise an error.
@@ -67,7 +72,7 @@ class ConfigMeta(type):
 
         if len(cls._registry) > 1:
             # reload os.environ
-            importlib.reload(os)
+            reload(os)
             env_module = import_env_module(cls)
             for attrname, attrvalue in attrs.items():
                 if not attrname.startswith("_"):

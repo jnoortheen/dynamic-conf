@@ -16,6 +16,7 @@ def clean_config():
 
 def test_config_loading(clean_config):
     CONFIG = get_config()
+    print(CONFIG.NUM)
     assert CONFIG.NUM == 1
     assert CONFIG.NONE_VAL is None
     assert CONFIG.OVERLOADED == "over-loaded"
@@ -28,7 +29,7 @@ def test_config_loading(clean_config):
 
 
 def test_cofig_writing(tmp_path, clean_config):
-    conf_file = os.path.join(tmp_path, "_conf.py")
+    conf_file = os.path.join(str(tmp_path), "_conf.py")
     with open(conf_file, "w") as f:
         f.write(
             """\
@@ -45,7 +46,7 @@ class CONFIG(Config):
 
     _main([conf_file, "ARG1=VAL1", "ARG2=VAL2"])
 
-    env_file = os.path.join(tmp_path, "env.py")
+    env_file = os.path.join(str(tmp_path), "env.py")
     assert os.path.exists(env_file)
     with open(env_file) as f:
         assert f.read() == "ARG1 = 'VAL1'\nARG2 = 'VAL2'"

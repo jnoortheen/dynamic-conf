@@ -1,5 +1,7 @@
 from __future__ import print_function
 
+from collections import OrderedDict
+
 try:
     reload
 except Exception:
@@ -109,7 +111,7 @@ class Config(with_metaclass(ConfigMeta)):
             print("Found", CONF_FILE, "existing already")
             return
 
-        vals = {}
+        vals = OrderedDict()
         prefix = os.environ.get("VARS_PREFIX", cls._default_prefix)
         for k, val in os.environ.items():
             if k.startswith(prefix):

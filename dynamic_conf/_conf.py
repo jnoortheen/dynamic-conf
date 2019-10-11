@@ -39,7 +39,7 @@ class Var(object):
 
         raise LookupError(
             "Failed to get {} variable from os.environ or {}".format(
-                self.name, self.module
+                self.name, owner.get_env_file_path()
             )
         )
 

@@ -101,11 +101,7 @@ class Config(with_metaclass(ConfigMeta)):
         )
 
     @classmethod
-    def create(cls, argv):
-        if len(cls._registry) < 2:
-            raise NotImplementedError(
-                "Config object is not inherited or the config file is not loaded."
-            )
+    def _create(cls, argv):
         CONF_FILE = cls.get_env_file_path()
         if os.path.exists(CONF_FILE):
             print("Found", CONF_FILE, "existing already")
@@ -142,3 +138,12 @@ class Config(with_metaclass(ConfigMeta)):
             print("Dynamic-Conf: No variables available.")
 
         return vals
+
+    @classmethod
+    def create(cls, argv):
+        if len(cls._registry) < 2:
+            raise NotImplementedError(
+                "Config object is not inherited or the config file is not loaded."
+            )
+
+        return cls._registry[-1]._create(argv)

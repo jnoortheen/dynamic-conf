@@ -22,7 +22,7 @@ class Var(object):
             if not given a default explicitly then this will raise an error.
             Get the given environment variable in followind order
                 1. os.environment
-                2. env.py
+                2. {_file_name}.py
                 3. default value
         """
         self.name = name
@@ -86,7 +86,7 @@ class ConfigMeta(type):
 
 
 class Config(with_metaclass(ConfigMeta)):
-    """singleton to be used for configuring from os.environ and env.py"""
+    """singleton to be used for configuring from os.environ and {_file_name}.py"""
 
     _file_name = "env"
     _default_prefix = "PROD_"

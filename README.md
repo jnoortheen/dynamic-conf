@@ -32,16 +32,16 @@ class CONFIG(Config):
     SECRET_KEY:str # required field. Note: it will not work in Python 2 because
 ```
 
-- to create `project/env.py` just run
+- to create `project/env.py` just run with the path to CONFIG class's module
 ```shell script
 # you could pass environment variables or set already with export
-env DB_PASS='123' dynamic-conf
+env DB_PASS='123' dynamic-conf project/conf.py
 
 # or you could pass as list of key-value pair
-dynamic-conf DB_USER='user-1' DB_PASS='123'
+dynamic-conf project/conf.py DB_USER='user-1' DB_PASS='123'
 
 # to filter environment variables with a prefix
-env VARS_PREFIX="PROD_" dynamic-conf PROD_DB_USER="user-2"
+env VARS_PREFIX="PROD_" dynamic-conf project/conf.py PROD_DB_USER="user-2"
 ```
 
 - To use the config simply import and use particular attribute

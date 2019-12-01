@@ -1,5 +1,5 @@
 # dynamic-config
-Easy to manage Config variables separate from App code. Useful while developing and deploying( CI/CD) django web-apps
+Project configuration variables are declared beforehand and inferred from environment variables or configuration files. Useful while developing and deploying( CI/CD) django web-apps
 
 # Install
 ```

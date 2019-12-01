@@ -37,7 +37,7 @@ class CONFIG(Config):
     DB_USER = "postgres"
     DB_PASS = None # even None could be given as default value
 
-    SECRET_KEY:str # required field. Note: it will not work in Python 2 because
+    SECRET_KEY:str # required field. Note: in Python 2 use `dynamic_conf.REQUIRED`
 ```
 
 - to create `project/env.py` just run with the path to CONFIG class's module

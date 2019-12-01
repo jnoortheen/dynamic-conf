@@ -6,15 +6,18 @@ Project configuration variables are declared beforehand and inferred from enviro
 pip install dynamic-conf
 ```
 
-# Usage
-
-- You need to subclass the `Config` class.
+# Features
 - Any configuration would be loaded from `python config` file `(default: env.py)` from the same folder where library is 
 inherited. This file should not be committed to version history.
 - You also don't need to include a sample file. Since the `Config` object would be able to generate `env.py` itself.
 - It also loads Configuration variables from environment variables. The preference is `env variables` > `env.py`
-- The config file should define all the variables needed for a project.
 - It can also define a prefix to limit environment variables searched.
+
+
+# Getting Started
+
+- You need to subclass the `Config` class.
+- The config file should define all the variables needed for a project.
 
 ```python
 
@@ -41,13 +44,19 @@ class CONFIG(Config):
 ```shell script
 # you could pass environment variables or set already with export
 env DB_PASS='123' dynamic-conf project/conf.py
+```
 
-# or you could pass as list of key-value pair
+- Also you could pass as list of key-value pair
+```
 dynamic-conf project/conf.py DB_USER='user-1' DB_PASS='123'
+```
 
-# to filter environment variables with a prefix
+- to filter environment variables with a prefix
+```
 env VARS_PREFIX="PROD_" dynamic-conf project/conf.py PROD_DB_USER="user-2"
 ```
+
+# Usage
 
 - To use the config simply import and use particular attribute
 ```python

@@ -49,7 +49,7 @@ class CONFIG(Config):
     env_file = os.path.join(str(tmp_path), "env.py")
     assert os.path.exists(env_file)
     with open(env_file) as f:
-        assert f.read() == "ARG1 = 'VAL1'\nARG2 = 'VAL2'"
+        assert f.read() == "VAR = 'variable'\nARG1 = 'VAL1'\nARG2 = 'VAL2'"
 
 
 def test_singleton(clean_config):

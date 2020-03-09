@@ -23,7 +23,7 @@ class Var(object):
     def __init__(self, module, name, default=_UNDEFINED):
         """
             if not given a default explicitly then this will raise an error.
-            Get the given environment variable in followind order
+            Get the given environment variable in following order
                 1. os.environment
                 2. {_file_name}.py
                 3. default value
@@ -88,11 +88,21 @@ class ConfigMeta(type):
         return cls
 
 
+def _normalize_prefix(default_prefix):
+    prefix = os.environ.get("VARS_PREFIX", default_prefix)
+    vals = OrderedDict()
+    if prefix:
+        for k, val in os.environ.items():
+            if k.startswith(prefix):
+                vals[k.replace(prefix, "")] = val
+    return vals
+
+
 class Config(with_metaclass(ConfigMeta)):
     """singleton to be used for configuring from os.environ and {_file_name}.py"""
 
     _file_name = "env"
-    _default_prefix = "PROD_"
+    _default_prefix = ""
     _registry = []
 
     @classmethod
@@ -111,10 +121,7 @@ class Config(with_metaclass(ConfigMeta)):
             return
 
         vals = OrderedDict()
-        prefix = os.environ.get("VARS_PREFIX", cls._default_prefix)
-        for k, val in os.environ.items():
-            if k.startswith(prefix):
-                vals[k.replace(prefix, "")] = val
+        vals.update(_normalize_prefix(cls._default_prefix))
         for k in cls.__dict__.keys():
             if k in os.environ:
                 vals[k] = os.environ[k]

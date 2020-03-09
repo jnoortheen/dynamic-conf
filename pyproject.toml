@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dynamic-conf"
-version = "0.1.2"
+version = "0.2.0"
 description = "Easy to manage Config variables separate from App code. Useful while developing and deploying( CI/CD) django web-apps"
 authors = ["Noortheen Raja <jnoortheen@gmail.com>"]
 license = "MIT"
@@ -23,13 +23,13 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "~2.7 || ^3.6"
+python = "^3.6"
 six = "^1.12"
 
 [tool.poetry.dev-dependencies]
-pytest = "^4"
-pytest-cov = "^2.8"
-tox = "^3.14"
+pytest = "^5"
+pytest-cov = "^2"
+tox = "^3"
 
 [tool.poetry.scripts]
 dynamic-conf = 'dynamic_conf:main'

@@ -11,9 +11,12 @@ import importlib
 import os
 
 from six import with_metaclass
+import logging
+
 
 _UNDEFINED = object()
 REQUIRED = object()  # only for Python2 support
+log = logging.getLogger(__file__)
 
 
 class Var(object):
@@ -52,7 +55,7 @@ def import_env_module(cls):
     try:
         env_module = importlib.import_module(env_module_path)
     except ImportError:
-        print(
+        log.info(
             "{} is not found. Getting variables from environment.".format(
                 cls.get_env_file_path()
             )
@@ -122,7 +125,7 @@ class Config(with_metaclass(ConfigMeta)):
                 vals[k] = val
 
         if vals:
-            print(
+            log.info(
                 "Writing following keys\n\t"
                 + "\n\t".join(vals.keys())
                 + "\n to "
@@ -135,7 +138,7 @@ class Config(with_metaclass(ConfigMeta)):
                     )
                 )
         else:
-            print("Dynamic-Conf: No variables available.")
+            log.info("Dynamic-Conf: No variables available.")
 
         return vals
 

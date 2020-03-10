@@ -74,6 +74,14 @@ def _normalize_prefix(default_prefix):
     return vals
 
 
+def _write_py(file, vals):
+    file.write("\n".join(["{} = {}".format(k, repr(val)) for k, val in vals.items()]))
+
+
+def _write_env(file, vals):
+    file.write("\n".join(["{}={}".format(k, val) for k, val in vals.items()]))
+
+
 def writer(cls, argv):
     CONF_FILE = get_env_file_path(cls)
     if os.path.exists(CONF_FILE):
@@ -98,9 +106,10 @@ def writer(cls, argv):
             + CONF_FILE
         )
         with open(CONF_FILE, "w") as f:
-            f.write(
-                "\n".join(["{} = {}".format(k, repr(val)) for k, val in vals.items()])
-            )
+            if CONF_FILE.endswith(".py"):
+                _write_py(f, vals)
+            else:
+                _write_env(f, vals)
     else:
         log.info("Dynamic-Conf: No variables available.")
 

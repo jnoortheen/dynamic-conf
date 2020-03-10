@@ -15,9 +15,16 @@ def clean_config():
 
 @pytest.fixture
 def create_env_file(tmp_path, clean_config):
-    def _factory(**kwargs):
-        env_file = os.path.join(str(tmp_path), "env.py")
-        attrs = "\n".join([f"{k}={val}" for k, val in kwargs.items()])
+    def _factory(
+        file_name, **kwargs,
+    ):
+        env_file = os.path.join(str(tmp_path), file_name)
+        attrs = "\n".join(
+            [
+                f"{k}={repr(val) if file_name.endswith('.py') else val}"
+                for k, val in kwargs.items()
+            ]
+        )
         with open(env_file, "w") as f:
             f.write(
                 f"""\
@@ -49,22 +56,24 @@ class CONFIG(Config):
 
 
 @pytest.fixture
-def CONFIG(create_conf_file, create_env_file):
-    from dynamic_conf._import import import_file
+def config_factory(create_conf_file, create_env_file, monkeypatch):
+    def _factory(file_name):
+        from dynamic_conf._import import import_file
 
-    os.environ["VAR"] = "variable"
-    conf = create_conf_file(
-        NUM=1,
-        NONE_VAL="None",
-        OVERLOADED='"load"',
-        VAR="None",
-        FROM_FILE="REQUIRED",
-        MISSING="REQUIRED",
-    )
-    create_env_file(
-        FROM_FILE='"file"', OVERLOADED='"over-loaded"'
-    )  # create env.py before module import
+        monkeypatch.setenv("VAR", "variable")
+        conf = create_conf_file(
+            _file_name=repr(file_name),
+            NUM=1,
+            NONE_VAL="None",
+            OVERLOADED='"load"',
+            VAR="None",
+            FROM_FILE="REQUIRED",
+            MISSING="REQUIRED",
+        )
+        _ = create_env_file(
+            file_name=file_name, FROM_FILE="file", OVERLOADED="over-loaded"
+        )  # create env.py before module import
+        mod = import_file(conf)
+        return mod.CONFIG
 
-    mod = import_file(conf)
-    yield mod.CONFIG
-    os.environ.pop("VAR")
+    return _factory

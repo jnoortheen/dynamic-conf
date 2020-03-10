@@ -31,7 +31,7 @@ class Var(object):
         if self.name in os.environ:
             return os.environ[self.name]
         if self.module:
-            if isinstance(self.module, Mapping):
+            if isinstance(self.module, dict) and self.name in self.module:
                 return self.module[self.name]
             if hasattr(self.module, self.name):
                 return getattr(self.module, self.name)

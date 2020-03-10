@@ -21,29 +21,54 @@ def create_config_cls():
     )
 
 
-def test_config_loading(CONFIG):
-    assert CONFIG.NUM == 1
-    assert CONFIG.NONE_VAL is None
-    assert CONFIG.OVERLOADED == "over-loaded"
-    assert CONFIG.VAR == "variable"
-    assert CONFIG.FROM_FILE == "file"
+@pytest.mark.parametrize("file", ["env.py", ".env"])
+def test_config_reading(file, config_factory):
+    CONF = config_factory(file)
+    assert CONF.NUM == 1
+    assert CONF.NONE_VAL is None
+    assert CONF.VAR == "variable"
+    assert CONF.OVERLOADED == "over-loaded"
+    assert CONF.FROM_FILE == "file"
     with pytest.raises(LookupError):
-        print(CONFIG.MISSING)
+        print(CONF.MISSING)
 
 
-def test_cofig_writing(create_conf_file):
+@pytest.mark.parametrize(
+    "file, result",
+    [("env.py", "ARG1 = 'VAL1'\nARG2 = 'VAL2'"), (".env", "ARG1=VAL1\nARG2=VAL2"),],
+)
+def test_cofig_writing(file, result, create_conf_file, monkeypatch):
+    monkeypatch.setenv("ARG1", "VAL1")
     from dynamic_conf import _main
 
-    conf_file = create_conf_file(
-        NUM=1, NONE_VAL="None", OVERLOADED='"load"', VAR="None",
-    )
+    conf_file = create_conf_file(_file_name=repr(file), ARG1=1)
+    _main([conf_file, "ARG2=VAL2"])
 
-    _main([conf_file, "ARG1=VAL1", "ARG2=VAL2"])
-
-    env_file = os.path.join(os.path.dirname(conf_file), "env.py")
+    env_file = os.path.join(os.path.dirname(conf_file), file)
     assert os.path.exists(env_file)
     with open(env_file) as f:
-        assert f.read() == "ARG1 = 'VAL1'\nARG2 = 'VAL2'"
+        content = f.read()
+        assert content == result
+
+
+@pytest.mark.parametrize(
+    "file, result",
+    [("env.py", "ARG1 = 'VAL1'\nARG2 = 'VAL2'"), (".env", "ARG1=VAL1\nARG2=VAL2"),],
+)
+def test_cofig_writing_with_filter_prefix(file, result, create_conf_file, monkeypatch):
+    monkeypatch.setenv("PRE_ARG1", "VAL1")
+    monkeypatch.setenv("VARS_PREFIX", "PRE_")
+    from dynamic_conf import _main
+
+    conf_file = create_conf_file(_file_name=repr(file), ARG1=1)
+
+    _main([conf_file, "ARG2=VAL2"])
+
+    env_file = os.path.join(os.path.dirname(conf_file), file)
+    assert os.path.exists(env_file)
+    with open(env_file) as f:
+        content = f.read()
+        assert content == result
 
 
 def test_singleton(clean_config):

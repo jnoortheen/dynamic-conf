@@ -26,7 +26,11 @@ class Var(object):
         self.name = name
         self.module = module
         self.default = default
-        self.type = typehint
+        self.type = (
+            type(default)
+            if typehint is _UNDEFINED and default is not _UNDEFINED
+            else typehint
+        )
 
     def get_value(self):
         if self.name in os.environ:

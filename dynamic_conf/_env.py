@@ -68,9 +68,9 @@ def _normalize_prefix(default_prefix):
     prefix = os.environ.get("VARS_PREFIX", default_prefix)
     vals = OrderedDict()
     if prefix:
-        for k, val in os.environ.items():
+        for k, val in os.environ.items():  # type: str, object
             if k.startswith(prefix):
-                vals[k.replace(prefix, "")] = val
+                vals[k.lstrip(prefix)] = val
     return vals
 
 

@@ -1,6 +1,9 @@
 from __future__ import print_function
 
 from collections import OrderedDict
+from typing import Type
+
+from ._import import import_file
 
 try:
     reload
@@ -25,7 +28,7 @@ class Var(object):
             if not given a default explicitly then this will raise an error.
             Get the given environment variable in following order
                 1. os.environment
-                2. {_file_name}.py
+                2. {file_name}.py or .env (if the name ends with .env and set by user)
                 3. default value
         """
         self.name = name
@@ -42,23 +45,29 @@ class Var(object):
 
         raise LookupError(
             "Failed to get {} variable from os.environ or {}".format(
-                self.name, owner.get_env_file_path()
+                self.name, get_env_file_path(owner)
             )
         )
 
 
-def import_env_module(cls):
-    env_module = None
+def get_env_file_path(cls):
+    conf = cls._registry[-1]
+    mod = importlib.import_module(conf.__module__)
+    return os.path.join(os.path.dirname(mod.__file__), "{}.py".format(cls.file_name))
 
-    pre_mod = cls.__module__.rsplit(".", 1)[:-1]
-    env_module_path = ".".join(pre_mod + [cls._file_name])
+
+def import_env_module(cls):
+    # reload os.environ
+    reload(os)
+
+    # an object that supports getattr
+    env_module = None
+    file_path = get_env_file_path(cls)
     try:
-        env_module = importlib.import_module(env_module_path)
+        env_module = import_file(file_path)
     except ImportError:
         log.info(
-            "{} is not found. Getting variables from environment.".format(
-                cls.get_env_file_path()
-            )
+            "{} is not found. Getting variables from environment.".format(file_path)
         )
     return env_module
 
@@ -66,7 +75,9 @@ def import_env_module(cls):
 class ConfigMeta(type):
     def __new__(mcls, name, bases, attrs):
         # Go over attributes and see if they should be renamed.
-        cls = super(ConfigMeta, mcls).__new__(mcls, name, bases, attrs)
+        cls = super(ConfigMeta, mcls).__new__(
+            mcls, name, bases, attrs
+        )  # type: Type[Config]
         cls._registry.append(cls)
         if len(cls._registry) > 2:
             raise NotImplementedError(
@@ -76,8 +87,6 @@ class ConfigMeta(type):
             )
 
         if len(cls._registry) > 1:
-            # reload os.environ
-            reload(os)
             env_module = import_env_module(cls)
             for attrname, attrvalue in attrs.items():
                 if not attrname.startswith("_"):
@@ -98,24 +107,21 @@ def _normalize_prefix(default_prefix):
     return vals
 
 
-class Config(with_metaclass(ConfigMeta)):
-    """singleton to be used for configuring from os.environ and {_file_name}.py"""
+DEFAULT_FILE = "env"
 
-    _file_name = "env"
+
+class Config(with_metaclass(ConfigMeta)):
+    """singleton to be used for configuring from os.environ and {file_name}.py"""
+
+    file_name = DEFAULT_FILE
+    """by default the suffix will be .py unless the file name is changed in the subclass"""
+
     _default_prefix = ""
     _registry = []
 
     @classmethod
-    def get_env_file_path(cls):
-        conf = cls._registry[-1]
-        mod = importlib.import_module(conf.__module__)
-        return os.path.join(
-            os.path.dirname(mod.__file__), "{}.py".format(cls._file_name)
-        )
-
-    @classmethod
     def _create(cls, argv):
-        CONF_FILE = cls.get_env_file_path()
+        CONF_FILE = get_env_file_path(cls)
         if os.path.exists(CONF_FILE):
             print("Found", CONF_FILE, "existing already")
             return

@@ -2,21 +2,26 @@ import os
 
 import pytest
 
-from dynamic_conf import Config
-from .conf import create_config, get_config
+
+def create_config_cls():
+    import uuid
+    from dynamic_conf import REQUIRED, Config
+
+    return type(
+        "CONFIG" + str(uuid.uuid4().hex),
+        (Config,),
+        dict(
+            NUM=1,
+            NONE_VAL=None,
+            OVERLOADED="load",
+            VAR=None,
+            FROM_FILE=REQUIRED,
+            MISSING=REQUIRED,
+        ),
+    )
 
 
-@pytest.yield_fixture(name="clean_config")
-def clean_config():
-    yield
-    if len(Config._registry) == 2:
-        # cleanup
-        Config._registry.pop()
-
-
-def test_config_loading(clean_config):
-    CONFIG = get_config()
-    print(CONFIG.NUM)
+def test_config_loading(CONFIG):
     assert CONFIG.NUM == 1
     assert CONFIG.NONE_VAL is None
     assert CONFIG.OVERLOADED == "over-loaded"
@@ -24,35 +29,24 @@ def test_config_loading(clean_config):
     assert CONFIG.FROM_FILE == "file"
     with pytest.raises(LookupError):
         print(CONFIG.MISSING)
-    # with pytest.raises(LookupError):
-    #     print(CONFIG.Req)
 
 
-def test_cofig_writing(tmp_path, clean_config):
-    conf_file = os.path.join(str(tmp_path), "_conf.py")
-    with open(conf_file, "w") as f:
-        f.write(
-            """\
-from dynamic_conf import Config
-class CONFIG(Config):
-    NUM = 1
-    NONE_VAL = None
-    OVERLOADED = "load"
-    VAR = None       
-"""
-        )
-
+def test_cofig_writing(create_conf_file):
     from dynamic_conf import _main
+
+    conf_file = create_conf_file(
+        NUM=1, NONE_VAL="None", OVERLOADED='"load"', VAR="None",
+    )
 
     _main([conf_file, "ARG1=VAL1", "ARG2=VAL2"])
 
-    env_file = os.path.join(str(tmp_path), "env.py")
+    env_file = os.path.join(os.path.dirname(conf_file), "env.py")
     assert os.path.exists(env_file)
     with open(env_file) as f:
-        assert f.read() == "VAR = 'variable'\nARG1 = 'VAL1'\nARG2 = 'VAL2'"
+        assert f.read() == "ARG1 = 'VAL1'\nARG2 = 'VAL2'"
 
 
 def test_singleton(clean_config):
-    create_config()
+    create_config_cls()
     with pytest.raises(NotImplementedError):
-        create_config()
+        create_config_cls()

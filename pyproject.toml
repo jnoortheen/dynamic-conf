@@ -30,6 +30,8 @@ six = "^1.12"
 pytest = "^5"
 pytest-cov = "^2"
 tox = "^3"
+sniffer = "^0.4.1"
+pyinotify = "^0.9.6"
 
 [tool.poetry.scripts]
 dynamic-conf = 'dynamic_conf:main'

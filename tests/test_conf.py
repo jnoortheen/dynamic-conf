@@ -24,7 +24,7 @@ def create_config_cls():
 @pytest.mark.parametrize("file", ["env.py", ".env"])
 def test_config_reading(file, config_factory):
     CONF = config_factory(file)
-    assert CONF.NUM == 1
+    assert CONF.NUM == 1  # check type casting
     assert CONF.NONE_VAL is None
     assert CONF.VAR == "variable"
     assert CONF.OVERLOADED == "over-loaded"

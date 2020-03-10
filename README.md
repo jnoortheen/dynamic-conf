@@ -8,13 +8,11 @@ pip install dynamic-conf
 
 # Features
 - supports `.env` or `.py` files
+- supports casting with type annotations
 - You also don't need to include a sample file. Since the `Config` object would be able to generate `.env.py` itself.
 - It also loads Configuration variables from environment variables. 
 The order of preference is `env variables` > `env.py`
 - Attributes are lazily evaluated.
-
-# Todos
-- [ ] supports casting with type annotations
 
 # Getting Started
 

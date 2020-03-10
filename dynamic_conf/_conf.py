@@ -15,7 +15,7 @@ log = logging.getLogger(__file__)
 
 
 class Var(object):
-    def __init__(self, module, name, default=_UNDEFINED):
+    def __init__(self, module, name, default=_UNDEFINED, typehint=_UNDEFINED):
         """
             if not given a default explicitly then this will raise an error.
             Get the given environment variable in following order
@@ -26,8 +26,9 @@ class Var(object):
         self.name = name
         self.module = module
         self.default = default
+        self.type = typehint
 
-    def __get__(self, instance, owner):
+    def get_value(self):
         if self.name in os.environ:
             return os.environ[self.name]
         if self.module:
@@ -37,12 +38,20 @@ class Var(object):
                 return getattr(self.module, self.name)
         if self.default not in {_UNDEFINED, REQUIRED}:
             return self.default
+        return _UNDEFINED
 
-        raise LookupError(
-            "Failed to get {} variable from os.environ or {}".format(
-                self.name, get_env_file_path(owner)
+    def __get__(self, instance, owner):
+        value = self.get_value()
+        if value is _UNDEFINED:
+            raise LookupError(
+                "Failed to get {} variable from os.environ or {}".format(
+                    self.name, get_env_file_path(owner)
+                )
             )
-        )
+        elif self.type and callable(self.type):
+            return self.type(value)
+        else:
+            return value
 
 
 class ConfigMeta(type):
@@ -61,11 +70,18 @@ class ConfigMeta(type):
 
         if len(cls._registry) > 1:
             env_module = reader(cls)
+            annotations = attrs.get("__annotations__")
             for attrname, attrvalue in attrs.items():
                 if not attrname.startswith("_"):
-                    setattr(cls, attrname, Var(env_module, attrname, default=attrvalue))
-                elif attrname == "__annotations__":
-                    for annot in attrvalue:
+                    _type = annotations.get(attrname) if annotations else None
+                    setattr(
+                        cls,
+                        attrname,
+                        Var(env_module, attrname, default=attrvalue, typehint=_type),
+                    )
+            if annotations:
+                for annot in annotations:
+                    if annot not in attrs:
                         setattr(cls, annot, Var(env_module, annot, default=REQUIRED))
         return cls
 

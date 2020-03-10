@@ -63,12 +63,12 @@ def config_factory(create_conf_file, create_env_file, monkeypatch):
         monkeypatch.setenv("VAR", "variable")
         conf = create_conf_file(
             _file_name=repr(file_name),
-            NUM=1,
             NONE_VAL="None",
             OVERLOADED='"load"',
             VAR="None",
             FROM_FILE="REQUIRED",
             MISSING="REQUIRED",
+            **{"NUM:int": "1"},
         )
         _ = create_env_file(
             file_name=file_name, FROM_FILE="file", OVERLOADED="over-loaded"

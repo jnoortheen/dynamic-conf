@@ -98,6 +98,11 @@ def writer(cls, argv):
             k, val = arg.split("=")
             vals[k] = val
 
+    if os.environ.get("VARS_DUMP", cls._dump):
+        for k in cls.__dict__.keys():
+            if k not in vals and not k.startswith("_"):
+                vals[k] = getattr(cls, k)
+
     if vals:
         log.info(
             "Writing following keys\n\t"

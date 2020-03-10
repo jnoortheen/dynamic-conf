@@ -2,7 +2,7 @@ from __future__ import print_function
 
 import logging
 import os
-from typing import Type, Mapping
+from typing import Type
 
 from six import with_metaclass
 
@@ -97,6 +97,8 @@ class Config(with_metaclass(ConfigMeta)):
     """by default the suffix will be .py unless the file name is changed in the subclass"""
 
     _default_prefix = ""
+    _dump = False
+    """Also configurable via environment VARS_DUMP"""
     _registry = []
 
     @classmethod

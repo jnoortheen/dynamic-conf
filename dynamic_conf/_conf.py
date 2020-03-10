@@ -53,7 +53,8 @@ class Var(object):
 def get_env_file_path(cls):
     conf = cls._registry[-1]
     mod = importlib.import_module(conf.__module__)
-    return os.path.join(os.path.dirname(mod.__file__), "{}.py".format(cls.file_name))
+    mod_dir = os.path.dirname(mod.__file__) if hasattr(mod, "__file__") else "."
+    return os.path.join(mod_dir, "{}.py".format(cls.file_name))
 
 
 def import_env_module(cls):
@@ -110,6 +111,41 @@ def _normalize_prefix(default_prefix):
 DEFAULT_FILE = "env"
 
 
+def writer(cls, argv):
+    # type: (Config, str) -> OrderedDict
+
+    CONF_FILE = get_env_file_path(cls)
+    if os.path.exists(CONF_FILE):
+        raise Exception(f"Found {CONF_FILE} existing already")
+
+    vals = OrderedDict()
+    vals.update(_normalize_prefix(cls._default_prefix))
+    for k in cls.__dict__.keys():
+        if k in os.environ:
+            vals[k] = os.environ[k]
+
+    for arg in argv:
+        if "=" in arg:
+            k, val = arg.split("=")
+            vals[k] = val
+
+    if vals:
+        log.info(
+            "Writing following keys\n\t"
+            + "\n\t".join(vals.keys())
+            + "\n to "
+            + CONF_FILE
+        )
+        with open(CONF_FILE, "w") as f:
+            f.write(
+                "\n".join(["{} = {}".format(k, repr(val)) for k, val in vals.items()])
+            )
+    else:
+        log.info("Dynamic-Conf: No variables available.")
+
+    return vals
+
+
 class Config(with_metaclass(ConfigMeta)):
     """singleton to be used for configuring from os.environ and {file_name}.py"""
 
@@ -120,46 +156,10 @@ class Config(with_metaclass(ConfigMeta)):
     _registry = []
 
     @classmethod
-    def _create(cls, argv):
-        CONF_FILE = get_env_file_path(cls)
-        if os.path.exists(CONF_FILE):
-            print("Found", CONF_FILE, "existing already")
-            return
-
-        vals = OrderedDict()
-        vals.update(_normalize_prefix(cls._default_prefix))
-        for k in cls.__dict__.keys():
-            if k in os.environ:
-                vals[k] = os.environ[k]
-
-        for arg in argv:
-            if "=" in arg:
-                k, val = arg.split("=")
-                vals[k] = val
-
-        if vals:
-            log.info(
-                "Writing following keys\n\t"
-                + "\n\t".join(vals.keys())
-                + "\n to "
-                + CONF_FILE
-            )
-            with open(CONF_FILE, "w") as f:
-                f.write(
-                    "\n".join(
-                        ["{} = {}".format(k, repr(val)) for k, val in vals.items()]
-                    )
-                )
-        else:
-            log.info("Dynamic-Conf: No variables available.")
-
-        return vals
-
-    @classmethod
     def create(cls, argv):
         if len(cls._registry) < 2:
             raise NotImplementedError(
                 "Config object is not inherited or the config file is not loaded."
             )
 
-        return cls._registry[-1]._create(argv)
+        return writer(cls._registry[-1], argv)

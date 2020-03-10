@@ -7,12 +7,14 @@ pip install dynamic-conf
 ```
 
 # Features
-- Any configuration would be loaded from `python config` file `(default: env.py)` from the same folder where library is 
-inherited. This file should not be committed to version history.
-- You also don't need to include a sample file. Since the `Config` object would be able to generate `env.py` itself.
-- It also loads Configuration variables from environment variables. The preference is `env variables` > `env.py`
-- It can also define a prefix to limit environment variables searched.
+- supports `.env` or `.py` files
+- You also don't need to include a sample file. Since the `Config` object would be able to generate `.env.py` itself.
+- It also loads Configuration variables from environment variables. 
+The order of preference is `env variables` > `env.py`
+- Attributes are lazily evaluated.
 
+# Todos
+- [ ] supports casting with type annotations
 
 # Getting Started
 
@@ -23,7 +25,7 @@ inherited. This file should not be committed to version history.
 
 # project/conf.py
 
-from dynamic_conf import Config
+from dynamic_conf import Config, REQUIRED
 
 class CONFIG(Config):
     """singleton to be used for configuring from os.environ and env.py"""
@@ -37,22 +39,18 @@ class CONFIG(Config):
     DB_USER = "postgres"
     DB_PASS = None # even None could be given as default value
 
-    SECRET_KEY:str # required field. Note: in Python 2 use `dynamic_conf.REQUIRED`
+    SECRET_KEY:str # Python 3 only
+    AN_SECRET_KEY = REQUIRED # Python 2 & 3
 ```
 
 - to create `project/env.py` just run with the path to CONFIG class's module
 ```shell script
 # you could pass environment variables or set already with export
 env DB_PASS='123' dynamic-conf project/conf.py
-```
 
-- Also you could pass as list of key-value pair
-```
-dynamic-conf project/conf.py DB_USER='user-1' DB_PASS='123'
-```
+dynamic-conf project/conf.py DB_USER='user-1' DB_PASS='123' # pass as list of key-value pair
 
-- to filter environment variables with a prefix
-```
+#to filter environment variables with a prefix
 env VARS_PREFIX="PROD_" dynamic-conf project/conf.py PROD_DB_USER="user-2"
 ```
 

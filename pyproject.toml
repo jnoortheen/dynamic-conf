@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dynamic-conf"
-version = "0.4.0"
+version = "0.4.1"
 description = "Easy to manage Config variables separate from App code. Useful while developing and deploying( CI/CD) django web-apps"
 authors = ["Noortheen Raja <jnoortheen@gmail.com>"]
 license = "MIT"

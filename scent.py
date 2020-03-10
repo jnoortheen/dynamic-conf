@@ -22,7 +22,7 @@ class Options:
     rerun_args = None
 
     targets = [
-        (("pytest",), "Unit Tests", True),
+        (("pytest", "-x"), "Unit Tests", True),
     ]
 
 

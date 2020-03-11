@@ -39,15 +39,17 @@ def create_env_file(tmp_path, clean_config):
 
 @pytest.fixture
 def create_conf_file(tmp_path, clean_config):
-    def _factory(**kwargs):
+    def _factory(*lines, **kwargs):
         conf_file = os.path.join(str(tmp_path), "conf.py")
         attrs = "\n".join([f"    {k}={val}" for k, val in kwargs.items()])
+        lines = "\n".join([f"    {l}" for l in lines])
         with open(conf_file, "w") as f:
             f.write(
                 f"""\
 from dynamic_conf import Config, REQUIRED
 class CONFIG(Config):
 {attrs}
+{lines}
 """
             )
         return conf_file
@@ -62,16 +64,20 @@ def config_factory(create_conf_file, create_env_file, monkeypatch):
 
         monkeypatch.setenv("VAR", "variable")
         conf = create_conf_file(
+            "REQUIRED_NUM:int",
             _file_name=repr(file_name),
             NONE_VAL="None",
             OVERLOADED='"load"',
             VAR="None",
             FROM_FILE="REQUIRED",
             MISSING="REQUIRED",
-            **{"NUM:int": "1"},
+            **{"NUM:int": "1", "BOOL:bool": "'false'"},
         )
         _ = create_env_file(
-            file_name=file_name, FROM_FILE="file", OVERLOADED="over-loaded"
+            file_name=file_name,
+            FROM_FILE="file",
+            OVERLOADED="over-loaded",
+            **{"# comment": "comment too"},
         )  # create env.py before module import
         mod = import_file(conf)
         return mod.CONFIG

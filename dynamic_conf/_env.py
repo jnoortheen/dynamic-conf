@@ -78,7 +78,7 @@ def _normalize_prefix(default_prefix):
     if prefix:
         for k, val in os.environ.items():  # type: str, object
             if k.startswith(prefix):
-                vals[k.lstrip(prefix)] = val
+                vals[k.replace(prefix, "", 1)] = val
     return vals
 
 

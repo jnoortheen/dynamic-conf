@@ -6,7 +6,7 @@ from typing import Type
 
 from six import with_metaclass
 
-from ._env import get_env_file_path, reader, writer, DEFAULT_FILE
+from ._env import get_env_file_path, reader, writer, DEFAULT_FILE, to_bool
 
 _UNDEFINED = object()
 REQUIRED = object()  # only for Python2 support
@@ -53,9 +53,20 @@ class Var(object):
                 )
             )
         elif self.type and callable(self.type):
-            return self.type(value)
+            if issubclass(self.type, bool):
+                return to_bool(value)
+            else:
+                return self.type(value)
         else:
             return value
+
+
+def set_attr(cls, env_module, attr, val, annotations):
+    if not attr.startswith("_"):
+        _type = annotations.get(attr) if annotations else None
+        setattr(
+            cls, attr, Var(env_module, attr, default=val, typehint=_type),
+        )
 
 
 class ConfigMeta(type):
@@ -76,17 +87,12 @@ class ConfigMeta(type):
             env_module = reader(cls)
             annotations = attrs.get("__annotations__")
             for attrname, attrvalue in attrs.items():
-                if not attrname.startswith("_"):
-                    _type = annotations.get(attrname) if annotations else None
-                    setattr(
-                        cls,
-                        attrname,
-                        Var(env_module, attrname, default=attrvalue, typehint=_type),
-                    )
+                set_attr(cls, env_module, attrname, attrvalue, annotations)
+
             if annotations:
-                for annot in annotations:
-                    if annot not in attrs:
-                        setattr(cls, annot, Var(env_module, annot, default=REQUIRED))
+                for attrname in annotations:
+                    if attrname not in attrs:
+                        set_attr(cls, env_module, attrname, REQUIRED, annotations)
         return cls
 
 

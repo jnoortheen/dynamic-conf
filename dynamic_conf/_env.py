@@ -82,6 +82,44 @@ def _write_env(file, vals):
     file.write("\n".join(["{}={}".format(k, val) for k, val in vals.items()]))
 
 
+
+def to_bool(value):
+    """utility function for boolean casting
+    >>> to_bool("True")
+    True
+    >>> to_bool("False")
+    False
+    >>> to_bool(True)
+    True
+
+    :type value any
+    """
+    valid = {
+        "True": True,
+        "true": True,
+        "on": True,
+        "t": True,
+        "1": True,
+        "False": False,
+        "false": False,
+        "off": False,
+        "f": False,
+        "0": False,
+    }
+
+    if isinstance(value, bool):
+        return value
+
+    lower_value = value.lower()
+    if lower_value in valid:
+        return valid[lower_value]
+    else:
+        raise ValueError(
+            "invalid literal for boolean: {}. Possible values are {}".format(
+                value, list(valid)
+            )
+        )
+
 def writer(cls, argv):
     CONF_FILE = get_env_file_path(cls)
     if os.path.exists(CONF_FILE):

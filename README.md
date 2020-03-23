@@ -1,6 +1,14 @@
 # dynamic-config
 Project configuration variables are declared beforehand and inferred from environment variables or configuration files. Useful while developing and deploying( CI/CD) django web-apps
 
+-------
+
+[![PyPi Version](https://img.shields.io/pypi/v/pconf.svg?style=flat)](https://pypi.python.org/pypi/pconf)
+[![Python Version](https://img.shields.io/pypi/pyversions/returns.svg)](https://pypi.org/project/returns/)
+
+-------
+
+
 # Install
 ```
 pip install dynamic-conf

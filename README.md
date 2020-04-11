@@ -3,8 +3,8 @@ Project configuration variables are declared beforehand and inferred from enviro
 
 -------
 
-[![PyPi Version](https://img.shields.io/pypi/v/pconf.svg?style=flat)](https://pypi.python.org/pypi/pconf)
-[![Python Version](https://img.shields.io/pypi/pyversions/returns.svg)](https://pypi.org/project/returns/)
+[![PyPi Version](https://img.shields.io/pypi/v/dynamic-conf.svg?style=flat)](https://pypi.python.org/pypi/dynamic-conf)
+[![Python Version](https://img.shields.io/pypi/pyversions/returns.svg)](https://pypi.org/project/dynamic-conf/)
 
 -------
 
@@ -18,7 +18,7 @@ pip install dynamic-conf
 - supports `.env` or `.py` files
 - supports casting with type annotations
 - You also don't need to include a sample file. Since the `Config` object would be able to generate `.env.py` itself.
-- It also loads Configuration variables from environment variables. 
+- It also loads Configuration variables from environment variables.
 The order of preference is `env variables` > `env.py`
 - Attributes are lazily evaluated.
 

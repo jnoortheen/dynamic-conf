@@ -2,7 +2,7 @@ from __future__ import print_function
 
 import logging
 import os
-from typing import Type
+from typing import Type, List, Union
 
 from six import with_metaclass
 
@@ -103,8 +103,11 @@ class Config(with_metaclass(ConfigMeta)):
     """by default the suffix will be .py unless the file name is changed in the subclass"""
 
     _default_prefix = ""
-    _dump = False
-    """Also configurable via environment VARS_DUMP"""
+    _dump = False # type: Union[bool, List[str]]
+    """Also configurable via environment VARS_DUMP. 
+    Helps to write variables to .env file even if its value is not defined in environment variables.
+    Can be set as True to write out all variables. This can be restricted with List of field names as well.
+    """
     _registry = []
 
     @classmethod

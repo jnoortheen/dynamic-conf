@@ -5,6 +5,7 @@
 """
 import logging
 from _collections import OrderedDict
+from typing import Union, List
 
 from ._import import import_file
 
@@ -155,8 +156,11 @@ def writer(cls, argv):
             k, val = arg.split("=")
             vals[k] = val
 
-    if os.environ.get("VARS_DUMP", cls._dump):
+    dump = os.environ.get("VARS_DUMP", cls._dump) # type: Union[bool, List[str]]
+    if dump:
         for k in cls.__dict__.keys():
+            if isinstance(dump, (list, tuple)) and k not in dump:
+                continue
             if k not in vals and not k.startswith("_"):
                 vals[k] = getattr(cls, k)
 

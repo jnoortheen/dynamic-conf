@@ -1,6 +1,7 @@
 import importlib.util
 import os
 import sys
+from pathlib import Path
 
 
 def get_module_name(path):
@@ -10,10 +11,9 @@ def get_module_name(path):
     return act_path.replace(os.sep, ".")
 
 
-def import_file(path):
-    # type: (str) -> any
-    if os.path.exists(path):
-        module_name = get_module_name(path)
+def import_file(path: Path):
+    if path.exists():
+        module_name = get_module_name(str(path))
         if module_name in sys.modules:
             return sys.modules[module_name]
         spec = importlib.util.spec_from_file_location(module_name, path)

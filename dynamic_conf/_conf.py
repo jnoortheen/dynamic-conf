@@ -2,9 +2,7 @@ from __future__ import print_function
 
 import logging
 import os
-from typing import Type, List, Union
-
-from six import with_metaclass
+import typing as tp
 
 from ._env import get_env_file_path, reader, writer, DEFAULT_FILE, to_bool
 
@@ -17,11 +15,11 @@ log = logging.getLogger(__file__)
 class Var(object):
     def __init__(self, module, name, default=_UNDEFINED, typehint=_UNDEFINED):
         """
-            if not given a default explicitly then this will raise an error.
-            Get the given environment variable in following order
-                1. os.environment
-                2. {_file_name}.py or .env (if the name ends with .env and set by user)
-                3. default value
+        if not given a default explicitly then this will raise an error.
+        Get the given environment variable in following order
+            1. os.environment
+            2. {_file_name}.py or .env (if the name ends with .env and set by user)
+            3. default value
         """
         self.name = name
         self.module = module
@@ -65,7 +63,9 @@ def set_attr(cls, env_module, attr, val, annotations):
     if not attr.startswith("_"):
         _type = annotations.get(attr) if annotations else None
         setattr(
-            cls, attr, Var(env_module, attr, default=val, typehint=_type),
+            cls,
+            attr,
+            Var(env_module, attr, default=val, typehint=_type),
         )
 
 
@@ -96,14 +96,14 @@ class ConfigMeta(type):
         return cls
 
 
-class Config(with_metaclass(ConfigMeta)):
+class Config(metaclass=ConfigMeta):
     """singleton to be used for configuring from os.environ and {_file_name}.py"""
 
     _file_name = DEFAULT_FILE
     """by default the suffix will be .py unless the file name is changed in the subclass"""
 
     _default_prefix = ""
-    _dump = False # type: Union[bool, List[str]]
+    _dump = False  # type: tp.Union[bool, tp.List[str]]
     """Also configurable via environment VARS_DUMP. 
     Helps to write variables to .env file even if its value is not defined in environment variables.
     Can be set as True to write out all variables. This can be restricted with List of field names as well.
@@ -111,7 +111,7 @@ class Config(with_metaclass(ConfigMeta)):
     _registry = []
 
     @classmethod
-    def create(cls, argv):
+    def create(cls, argv: tp.List[str]):
         if len(cls._registry) < 2:
             raise NotImplementedError(
                 "Config object is not inherited or the config file is not loaded."

@@ -96,7 +96,7 @@ def test_cofig_writing_with_dump(file, result, create_conf_file, monkeypatch):
 
     conf_file = create_conf_file(_file_name=repr(file), ARG1=1, ARG3=3)
 
-    _main(conf_file,[ "ARG2=VAL2"])
+    _main(conf_file, ["ARG2=VAL2"])
 
     env_file = os.path.join(os.path.dirname(conf_file), file)
     assert os.path.exists(env_file)

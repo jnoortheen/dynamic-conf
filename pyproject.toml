@@ -33,6 +33,7 @@ tox = "^3"
 sniffer = "^0.4.1"
 pyinotify = "^0.9.6"
 ipython = "^7.13.0"
+better-exceptions = "^0.2.2"
 
 [tool.poetry.scripts]
 dynamic-conf = 'dynamic_conf:main'

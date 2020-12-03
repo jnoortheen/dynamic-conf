@@ -6,7 +6,7 @@ from ._conf import Config, REQUIRED
 from ._import import import_file
 
 
-def _main(conf_file: Path, vars:tp.List[str]):
+def _main(conf_file: Path, vars: tp.List[str]):
     """CLI to create env.py or .env file from vars positional argument or from ENV variables.
 
     Parameters

@@ -111,7 +111,7 @@ class Config(metaclass=ConfigMeta):
     _registry = []
 
     @classmethod
-    def create(cls, argv: tp.List[str]):
+    def create(cls, argv: tp.Sequence[str]):
         if len(cls._registry) < 2:
             raise NotImplementedError(
                 "Config object is not inherited or the config file is not loaded."

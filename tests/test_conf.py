@@ -36,14 +36,17 @@ def test_config_reading(file, config_factory):
 
 @pytest.mark.parametrize(
     "file, result",
-    [("env.py", "ARG1 = 'VAL1'\nARG2 = 'VAL2'"), (".env", "ARG1=VAL1\nARG2=VAL2"),],
+    [
+        ("env.py", "ARG1 = 'VAL1'\nARG2 = 'VAL2'"),
+        (".env", "ARG1=VAL1\nARG2=VAL2"),
+    ],
 )
 def test_cofig_writing(file, result, create_conf_file, monkeypatch):
     monkeypatch.setenv("ARG1", "VAL1")
     from dynamic_conf import _main
 
     conf_file = create_conf_file(_file_name=repr(file), ARG1=1)
-    _main([conf_file, "ARG2=VAL2"])  # start write
+    _main(conf_file, ["ARG2=VAL2"])  # start write
 
     env_file = os.path.join(os.path.dirname(conf_file), file)
     assert os.path.exists(env_file)
@@ -52,13 +55,16 @@ def test_cofig_writing(file, result, create_conf_file, monkeypatch):
         assert content == result
 
     with pytest.raises(Exception) as ex:
-        _main([conf_file, "ARG2=VAL2"])  # start write again
+        _main(conf_file, ["ARG2=VAL2"])  # start write again
         assert "Found" in str(ex)
 
 
 @pytest.mark.parametrize(
     "file, result",
-    [("env.py", "ARG1 = 'VAL1'\nARG2 = 'VAL2'"), (".env", "ARG1=VAL1\nARG2=VAL2"),],
+    [
+        ("env.py", "ARG1 = 'VAL1'\nARG2 = 'VAL2'"),
+        (".env", "ARG1=VAL1\nARG2=VAL2"),
+    ],
 )
 def test_cofig_writing_with_filter_prefix(file, result, create_conf_file, monkeypatch):
     monkeypatch.setenv("PRE_ARG1", "VAL1")
@@ -67,7 +73,7 @@ def test_cofig_writing_with_filter_prefix(file, result, create_conf_file, monkey
 
     conf_file = create_conf_file(_file_name=repr(file), ARG1=1)
 
-    _main([conf_file, "ARG2=VAL2"])
+    _main(conf_file, ["ARG2=VAL2"])
 
     env_file = os.path.join(os.path.dirname(conf_file), file)
     assert os.path.exists(env_file)
@@ -90,7 +96,7 @@ def test_cofig_writing_with_dump(file, result, create_conf_file, monkeypatch):
 
     conf_file = create_conf_file(_file_name=repr(file), ARG1=1, ARG3=3)
 
-    _main([conf_file, "ARG2=VAL2"])
+    _main(conf_file,[ "ARG2=VAL2"])
 
     env_file = os.path.join(os.path.dirname(conf_file), file)
     assert os.path.exists(env_file)

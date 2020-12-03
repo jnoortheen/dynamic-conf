@@ -2,6 +2,7 @@ import importlib.util
 import os
 import sys
 from pathlib import Path
+import typing as tp
 
 
 def get_module_name(path):
@@ -11,7 +12,10 @@ def get_module_name(path):
     return act_path.replace(os.sep, ".")
 
 
-def import_file(path: Path):
+def import_file(path: tp.Union[Path, str]):
+    if isinstance(path, str):
+        path = Path(path)
+
     if path.exists():
         module_name = get_module_name(str(path))
         if module_name in sys.modules:

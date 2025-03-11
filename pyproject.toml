@@ -31,15 +31,15 @@ Repository = "https://github.com/jnoortheen/dynamic-conf"
 [project.scripts]
 dynamic-conf = "dynamic_conf:main"
 
-[dependency-groups]
+[project.optional-dependencies]
 dev = [
-    "pytest>=5,<6",
-    "pytest-cov>=2,<3",
-    "tox>=3,<4",
-    "sniffer>=0.4.1,<0.5",
-    "pyinotify>=0.9.6,<0.10",
-    "ipython>=7.13.0,<8",
-    "better-exceptions>=0.2.2,<0.3",
+    "pytest",
+    "pytest-cov",
+    "tox",
+    "sniffer",
+    # "pyinotify>=0.9.6,<0.10",
+    "ipython",
+    "better-exceptions",
 ]
 
 [build-system]

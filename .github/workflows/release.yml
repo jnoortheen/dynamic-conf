@@ -2,13 +2,10 @@ name: Release to PyPI
 
 on:
   push:
-    branches:
-      - master
-    # tags:
-    #   - 'v*'  # Trigger on version tags
-
-env:
-  UV_SYSTEM_PYTHON: 1
+    # branches:
+    #   - master
+    tags:
+      - 'v*'  # Trigger on version tags
 
 jobs:
   release:

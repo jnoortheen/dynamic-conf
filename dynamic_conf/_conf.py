@@ -72,9 +72,7 @@ def set_attr(cls, env_module, attr, val, annotations):
 class ConfigMeta(type):
     def __new__(mcls, name, bases, attrs):
         # Go over attributes and see if they should be renamed.
-        cls = super(ConfigMeta, mcls).__new__(
-            mcls, name, bases, attrs
-        )  # type: Type[Config]
+        cls = super(ConfigMeta, mcls).__new__(mcls, name, bases, attrs)  # type: Type[Config]
         cls._registry.append(cls)
         if len(cls._registry) > 2:
             raise NotImplementedError(

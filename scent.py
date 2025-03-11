@@ -43,7 +43,6 @@ def run_targets(*_):
     """Run targets for Python."""
     count = 0
     for count, (command, title, retry) in enumerate(Options.targets, start=1):
-
         success = call(command, title, retry)
         if not success:
             message = "✅ " * (count - 1) + "❌"

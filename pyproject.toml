@@ -3,7 +3,7 @@ name = "dynamic-conf"
 dynamic = ["version"]
 description = "Easy to manage Config variables separate from App code. Useful while developing and deploying( CI/CD) django web-apps"
 authors = [{ name = "Noortheen Raja", email = "jnoortheen@gmail.com" }]
-requires-python = "~=3.6"
+requires-python = ">=3.8"
 readme = "README.md"
 license = "MIT"
 keywords = [

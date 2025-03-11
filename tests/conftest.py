@@ -16,7 +16,8 @@ def clean_config():
 @pytest.fixture
 def create_env_file(tmp_path, clean_config):
     def _factory(
-        file_name, **kwargs,
+        file_name,
+        **kwargs,
     ):
         env_file = os.path.join(str(tmp_path), file_name)
         attrs = "\n".join(

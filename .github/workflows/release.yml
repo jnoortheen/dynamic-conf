@@ -2,8 +2,10 @@ name: Release to PyPI
 
 on:
   push:
-    tags:
-      - 'v*'  # Trigger on version tags
+    branches:
+      - master
+    # tags:
+    #   - 'v*'  # Trigger on version tags
 
 jobs:
   release:
@@ -21,7 +23,7 @@ jobs:
         run: pip install build
 
       - name: Build package
-        run: python -m build
+        run: python -m build .
 
       - name: Publish package to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1

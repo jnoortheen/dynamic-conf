@@ -1,15 +1,16 @@
-[tool.poetry]
+[project]
 name = "dynamic-conf"
 version = "1.0.1"
 description = "Easy to manage Config variables separate from App code. Useful while developing and deploying( CI/CD) django web-apps"
-authors = ["Noortheen Raja <jnoortheen@gmail.com>"]
+authors = [{ name = "Noortheen Raja", email = "jnoortheen@gmail.com" }]
+requires-python = "~=3.6"
+readme = "README.md"
 license = "MIT"
-
-readme = 'README.md'
-repository = "https://github.com/jnoortheen/dynamic-conf"
-homepage = "https://github.com/jnoortheen/dynamic-conf"
-
-keywords = ['django', 'configuration', '12 factor settings']
+keywords = [
+    "django",
+    "configuration",
+    "12 factor settings",
+]
 classifiers = [
     "Framework :: Django",
     "Intended Audience :: Developers",
@@ -21,22 +22,25 @@ classifiers = [
     "Topic :: Software Development :: Libraries",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
+dependencies = ["arger>=1.0.10,<2"]
 
-[tool.poetry.dependencies]
-python = "^3.6"
-arger = "^1.0.10"
+[project.urls]
+Homepage = "https://github.com/jnoortheen/dynamic-conf"
+Repository = "https://github.com/jnoortheen/dynamic-conf"
 
-[tool.poetry.dev-dependencies]
-pytest = "^5"
-pytest-cov = "^2"
-tox = "^3"
-sniffer = "^0.4.1"
-pyinotify = "^0.9.6"
-ipython = "^7.13.0"
-better-exceptions = "^0.2.2"
+[project.scripts]
+dynamic-conf = "dynamic_conf:main"
 
-[tool.poetry.scripts]
-dynamic-conf = 'dynamic_conf:main'
+[dependency-groups]
+dev = [
+    "pytest>=5,<6",
+    "pytest-cov>=2,<3",
+    "tox>=3,<4",
+    "sniffer>=0.4.1,<0.5",
+    "pyinotify>=0.9.6,<0.10",
+    "ipython>=7.13.0,<8",
+    "better-exceptions>=0.2.2,<0.3",
+]
 
 [build-system]
 requires = ["poetry>=0.12"]

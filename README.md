@@ -31,7 +31,7 @@ The order of preference is `env variables` > `env.py`
 
 # project/conf.py
 
-from dynamic_conf import Config, REQUIRED
+from dynamic_conf import Config
 
 class CONFIG(Config):
     """singleton to be used for configuring from os.environ and env.py"""

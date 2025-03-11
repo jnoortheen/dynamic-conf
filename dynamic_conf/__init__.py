@@ -2,7 +2,7 @@ from pathlib import Path
 import typing as tp
 from arger import Arger
 import argparse as ap
-from ._conf import Config
+from ._conf import Config, REQUIRED
 from ._import import import_file
 
 

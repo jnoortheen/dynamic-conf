@@ -36,17 +36,15 @@ from dynamic_conf import Config, REQUIRED
 class CONFIG(Config):
     """singleton to be used for configuring from os.environ and env.py"""
 
-    # default settings
+    SECRET_KEY:str      # required value
 
-    ENV = "prod" # optional field with a default value
+    # default settings
+    ENV = "prod"        # optional field with a default value
 
     DB_NAME = "db"
     DB_HOST = "127.0.0.1"
     DB_USER = "postgres"
-    DB_PASS = None # even None could be given as default value
-
-    SECRET_KEY:str # Python 3 only
-    AN_SECRET_KEY = REQUIRED # Python 2 & 3
+    DB_PASS = None      # even None could be given as default value
 ```
 
 - to create `project/env.py` just run with the path to CONFIG class's module

@@ -77,3 +77,7 @@ DATABASES = {
     }
 }
 ```
+
+# New release
+
+- create a new release from Github web interface. The package is published to PyPI using Github Actions.
